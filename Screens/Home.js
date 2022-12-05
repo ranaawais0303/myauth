@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
-import Background from "./Background";
-import PrimaryButton from "./UI/PrimaryButton";
-import Title from "./UI/Title";
+import Background from "../components/Background";
+import PrimaryButton from "../components/UI/PrimaryButton";
+import Title from "../components/UI/Title";
 
 function Home(props) {
   function loginHandler() {
