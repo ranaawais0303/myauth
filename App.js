@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "../myauth/components/Home";
+import Signup from "./Screens/Signup";
+import Login from "./Screens/Login";
 
 function App() {
   const Stack = createNativeStackNavigator();
@@ -10,6 +12,8 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Login" component={Login} />
       </Stack.Navigator>
     </NavigationContainer>
   );

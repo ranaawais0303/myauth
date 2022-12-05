@@ -1,11 +1,22 @@
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import Background from "./Background";
+import PrimaryButton from "./UI/PrimaryButton";
+import Title from "./UI/Title";
 
-function Home() {
+function Home(props) {
+  function loginHandler() {
+    console.log("pressed");
+    props.navigation.navigate("Login");
+  }
+  function signupHandler() {
+    props.navigation.navigate("Signup");
+  }
   return (
     <Background>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Home Screen</Text>
+        <Title>Home Screen</Title>
+        <PrimaryButton onPress={loginHandler}>Login</PrimaryButton>
+        <PrimaryButton onPress={signupHandler}>Signup</PrimaryButton>
       </View>
     </Background>
   );
@@ -13,15 +24,6 @@ function Home() {
 export default Home;
 
 const styles = StyleSheet.create({
-  rootScreen: {
-    flex: 1,
-  },
-  text: { color: "white", fontSize: 65 },
-  //   homeScreen: {
-  //     flex: 1,
-  //     alignItems: "center",
-  //     justifyContent: "center",
-  //   },
   textContainer: {
     marginHorizontal: 40,
     marginVertical: 100,
