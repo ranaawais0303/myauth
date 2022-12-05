@@ -56,16 +56,17 @@ function Login(props) {
             onChangeText={emailInputHandler}
             value={enteredEmail}
           />
+
           <Fields
-            placeholder="Enter the password"
+            placeholder="Enter the Password"
+            onChangeText={passwordInputHandler}
+            value={enteredPassword}
+          />
+          <Fields
+            placeholder="Confirm password"
             secureTextEntry={true}
             onChangeText={confirmPasswordInputHandler}
             value={enteredConfirmPassword}
-          />
-          <Fields
-            placeholder="Confirm Password"
-            onChangeText={passwordInputHandler}
-            value={enteredPassword}
           />
           <Text style={styles.textStyle}></Text>
           <PrimaryButton onPress={signupHandler}>Signup</PrimaryButton>
