@@ -48,8 +48,8 @@ function Signup(props) {
   }
 
   //for creating account
-  function signupHandler() {
-    signup({
+  async function signupHandler() {
+    await signup({
       name: enteredName,
       email: enteredEmail,
       password: enteredPassword,

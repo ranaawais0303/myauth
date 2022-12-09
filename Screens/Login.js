@@ -7,11 +7,15 @@ import Fields from "../components/UI/Fields";
 import PrimaryButton from "../components/UI/PrimaryButton";
 import Title from "../components/UI/Title";
 import Colors from "../constant/colors";
-import { login } from "../services/user-servic";
+import { loginUser } from "../services/user-servic";
 
 function Login(props) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const data = {
+    username: enteredEmail,
+    password: enteredPassword,
+  };
   function emailInputHandler(e) {
     setEnteredEmail(e);
     console.log(enteredEmail);
@@ -23,23 +27,41 @@ function Login(props) {
   function navigateHandler() {
     props.navigation.navigate("Signup");
   }
-  function loginHandler() {
-    login().then((resp) => {
-      console.log(resp);
-      if (
-        resp[0].email === enteredEmail &&
-        resp[0].password === enteredPassword
-      ) {
-        props.navigation.navigate("Home");
-        console.log("...................");
-      } else {
-        console.log("password or email is incorrect");
-        console.log(enteredEmail);
-        console.log(enteredPassword);
-        console.log(resp[0].email, "response email");
-        console.log(resp[0].password, "response password");
-      }
-    });
+  async function loginHandler() {
+    if (enteredEmail.trim() === "" || enteredPassword.trim() === "") {
+      console.log("empty values are not allowed");
+      return;
+    } else {
+      await loginUser(data)
+        .then((jwtTokenData) => {
+          console.log("user login: ");
+          console.log(jwtTokenData);
+          // props.navigation.navigate("Signup");
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log("something went wrong");
+          console.log(data);
+        });
+    }
+    console.log(data);
+    console.log("..............dddd");
+    // login().then((resp) => {
+    //   console.log(resp);
+    //   if (
+    //     resp[0].email === enteredEmail &&
+    //     resp[0].password === enteredPassword
+    //   ) {
+    //     props.navigation.navigate("Home");
+    //     console.log("...................");
+    //   } else {
+    //     console.log("password or email is incorrect");
+    //     console.log(enteredEmail);
+    //     console.log(enteredPassword);
+    //     console.log(resp[0].email, "response email");
+    //     console.log(resp[0].password, "response password");
+    //   }
+    // });
   }
   return (
     <Background>
