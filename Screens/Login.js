@@ -7,6 +7,7 @@ import Fields from "../components/UI/Fields";
 import PrimaryButton from "../components/UI/PrimaryButton";
 import Title from "../components/UI/Title";
 import Colors from "../constant/colors";
+import { login } from "../services/user-servic";
 
 function Login(props) {
   const [enteredEmail, setEnteredEmail] = useState("");
@@ -22,7 +23,24 @@ function Login(props) {
   function navigateHandler() {
     props.navigation.navigate("Signup");
   }
-  function loginHandler() {}
+  function loginHandler() {
+    login().then((resp) => {
+      console.log(resp);
+      if (
+        resp[0].email === enteredEmail &&
+        resp[0].password === enteredPassword
+      ) {
+        props.navigation.navigate("Home");
+        console.log("...................");
+      } else {
+        console.log("password or email is incorrect");
+        console.log(enteredEmail);
+        console.log(enteredPassword);
+        console.log(resp[0].email, "response email");
+        console.log(resp[0].password, "response password");
+      }
+    });
+  }
   return (
     <Background>
       <View>

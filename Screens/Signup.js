@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+import { signup } from "../services/user-servic";
 import Background from "../components/Background";
 import Card from "../components/UI/Card";
 import Fields from "../components/UI/Fields";
@@ -8,13 +9,22 @@ import PrimaryButton from "../components/UI/PrimaryButton";
 import Title from "../components/UI/Title";
 import Colors from "../constant/colors";
 
-function Login(props) {
+function Signup(props) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [enteredConfirmPassword, setEnteredConfirmPassword] = useState("");
-
   const [enteredName, setEnteredName] = useState("");
+  const [error, setError] = useState({
+    errors: {},
+    isError: false,
+  });
 
+  function resetData() {
+    setEnteredName("");
+    setEnteredEmail("");
+    setEnteredPassword("");
+    setEnteredConfirmPassword("");
+  }
   function nameInputHandler(e) {
     setEnteredName(e);
     console.log(enteredName);
@@ -31,10 +41,27 @@ function Login(props) {
     setEnteredConfirmPassword(e);
     console.log(enteredConfirmPassword);
   }
+
+  //already have an account
   function navigateHandler() {
     props.navigation.navigate("Login");
   }
+
+  //for creating account
   function signupHandler() {
+    signup({
+      name: enteredName,
+      email: enteredEmail,
+      password: enteredPassword,
+    })
+      .then((resp) => {
+        console.log(resp);
+        console.log("success Log");
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log("Error Log");
+      });
     props.navigation.navigate("Login");
   }
   return (
@@ -90,7 +117,7 @@ function Login(props) {
   );
 }
 
-export default Login;
+export default Signup;
 
 const styles = StyleSheet.create({
   textP: {
