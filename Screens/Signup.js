@@ -14,17 +14,17 @@ function Signup(props) {
   const [enteredPassword, setEnteredPassword] = useState("");
   const [enteredConfirmPassword, setEnteredConfirmPassword] = useState("");
   const [enteredName, setEnteredName] = useState("");
-  const [error, setError] = useState({
-    errors: {},
-    isError: false,
-  });
+  const [errors, setErrors] = useState({});
 
+  ///////Reset Data
   function resetData() {
     setEnteredName("");
     setEnteredEmail("");
     setEnteredPassword("");
     setEnteredConfirmPassword("");
   }
+
+  ////////////Handlers////////////
   function nameInputHandler(e) {
     setEnteredName(e);
     console.log(enteredName);
@@ -42,11 +42,52 @@ function Signup(props) {
     console.log(enteredConfirmPassword);
   }
 
+  ///Error Handler/////////////
+  function handleError(errorMessage, input) {
+    setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
+  }
+
   //already have an account
   function navigateHandler() {
     props.navigation.navigate("Login");
   }
+  function validate() {
+    let valid = true;
+    if (!enteredEmail) {
+      handleError("please input email", "email");
+      valid = false;
+    } else if (
+      !enteredEmail.match(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+    ) {
+      handleError("please input valid email", "email");
+      valid = false;
+    }
+    if (!enteredPassword) {
+      handleError("please input Password", "password");
+      valid = false;
+    } else if (enteredPassword.length < 5) {
+      handleError("Min password length of 5", "password");
+      valid = false;
+    }
 
+    if (!enteredName) {
+      handleError("please input name", "name");
+    }
+
+    if (!enteredConfirmPassword) {
+      handleError("please input confirm Password", "conPassword");
+    } else if (enteredConfirmPassword !== enteredPassword) {
+      handleError(
+        "please confirm Password must be same as password",
+        "conPassword"
+      );
+    }
+    if (valid) {
+      signupHandler();
+    }
+  }
   //for creating account
   async function signupHandler() {
     await signup({
@@ -61,8 +102,12 @@ function Signup(props) {
       .catch((error) => {
         console.log(error);
         console.log("Error Log");
+      })
+      .finally(() => {
+        resetData();
       });
-    props.navigation.navigate("Login");
+
+    // props.navigation.navigate("Login");
   }
   return (
     <Background>
@@ -77,26 +122,41 @@ function Signup(props) {
             placeholder="Enter your name"
             onChangeText={nameInputHandler}
             value={enteredName}
+            error={errors.name}
+            onFocus={() => {
+              handleError(null, "name");
+            }}
           />
           <Fields
             placeholder="Enter email"
             onChangeText={emailInputHandler}
             value={enteredEmail}
+            error={errors.email}
+            onFocus={() => {
+              handleError(null, "email");
+            }}
           />
-
           <Fields
             placeholder="Enter the Password"
             onChangeText={passwordInputHandler}
             value={enteredPassword}
+            error={errors.password}
+            onFocus={() => {
+              handleError(null, "password");
+            }}
           />
           <Fields
             placeholder="Confirm password"
             secureTextEntry={true}
             onChangeText={confirmPasswordInputHandler}
             value={enteredConfirmPassword}
+            error={errors.conPassword}
+            onFocus={() => {
+              handleError(null, "conPassword");
+            }}
           />
           <Text style={styles.textStyle}></Text>
-          <PrimaryButton onPress={signupHandler}>Signup</PrimaryButton>
+          <PrimaryButton onPress={validate}>Signup</PrimaryButton>
           <View style={styles.botomContainer}>
             <Text>Already have an account?</Text>
             <Pressable onPress={navigateHandler}>

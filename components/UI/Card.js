@@ -1,9 +1,13 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 // import Colors from "../../constant/colors";
 
 function Card({ children }) {
-  return <View style={styles.inputContainer}>{children}</View>;
+  return (
+    <ScrollView>
+      <View style={styles.inputContainer}>{children}</View>
+    </ScrollView>
+  );
 }
 
 export default Card;

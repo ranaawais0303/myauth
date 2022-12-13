@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 
-import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from "react-native";
 import Background from "../components/Background";
 import Card from "../components/UI/Card";
 import Fields from "../components/UI/Fields";
@@ -12,6 +19,7 @@ import { loginUser } from "../services/user-servic";
 function Login(props) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const data = {
     username: enteredEmail,
     password: enteredPassword,
@@ -24,45 +32,54 @@ function Login(props) {
     setEnteredPassword(e);
     console.log(enteredPassword);
   }
+
+  function handleError(errorMessage, input) {
+    setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
+  }
+  /////
   function navigateHandler() {
     props.navigation.navigate("Signup");
   }
-  async function loginHandler() {
-    if (enteredEmail.trim() === "" || enteredPassword.trim() === "") {
-      console.log("empty values are not allowed");
-      return;
-    } else {
-      await loginUser(data)
-        .then((jwtTokenData) => {
-          console.log("user login: ");
-          console.log(jwtTokenData);
-          // props.navigation.navigate("Signup");
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log("something went wrong");
-          console.log(data);
-        });
+  ////////
+  function validate() {
+    let valid = true;
+    if (!enteredEmail) {
+      handleError("please input email", "email");
+      valid = false;
+    } else if (
+      !enteredEmail.match(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+    ) {
+      handleError("please input valid email", "email");
+      valid = false;
     }
-    console.log(data);
-    console.log("..............dddd");
-    // login().then((resp) => {
-    //   console.log(resp);
-    //   if (
-    //     resp[0].email === enteredEmail &&
-    //     resp[0].password === enteredPassword
-    //   ) {
-    //     props.navigation.navigate("Home");
-    //     console.log("...................");
-    //   } else {
-    //     console.log("password or email is incorrect");
-    //     console.log(enteredEmail);
-    //     console.log(enteredPassword);
-    //     console.log(resp[0].email, "response email");
-    //     console.log(resp[0].password, "response password");
-    //   }
-    // });
+    if (!enteredPassword) {
+      handleError("please input Password", "password");
+      valid = false;
+    } else if (enteredPassword.length < 5) {
+      handleError("Min password length of 5", "password");
+      valid = false;
+    }
+    if (valid) {
+      loginHandler();
+    }
   }
+
+  /////
+  async function loginHandler() {
+    await loginUser(data)
+      .then((jwtTokenData) => {
+        console.log("user login: ");
+        console.log(jwtTokenData);
+        props.navigation.navigate("Landing");
+      })
+      .catch((err) => {
+        Alert.alert("email or password is incorrect");
+        console.log(data);
+      });
+  }
+
   return (
     <Background>
       <View>
@@ -78,15 +95,23 @@ function Login(props) {
             placeholder="Enter email"
             onChangeText={emailInputHandler}
             value={enteredEmail}
+            error={errors.email}
+            onFocus={() => {
+              handleError(null, "email");
+            }}
           />
           <Fields
             placeholder="Enter the password"
             secureTextEntry={true}
             onChangeText={passwordInputHandler}
             value={enteredPassword}
+            error={errors.password}
+            onFocus={() => {
+              handleError(null, "password");
+            }}
           />
           <Text style={styles.textStyle}>Forgot Password?</Text>
-          <PrimaryButton onPress={loginHandler}>Login</PrimaryButton>
+          <PrimaryButton onPress={validate}>Login</PrimaryButton>
           <View style={styles.botomContainer}>
             <Text>Don't Have any account?</Text>
             <Pressable onPress={navigateHandler}>
