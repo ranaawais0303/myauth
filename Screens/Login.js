@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   View,
@@ -15,11 +16,18 @@ import PrimaryButton from "../components/UI/PrimaryButton";
 import Title from "../components/UI/Title";
 import Colors from "../constant/colors";
 import { loginUser } from "../services/user-servic";
+import { addAuth } from "../redux/AuthSlice";
 
 function Login(props) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [errors, setErrors] = useState({});
+
+  // /Redux functionality
+  const dispatch = useDispatch();
+  const addedItems = useSelector((state) => state.auth);
+
+  /////////////////
   const data = {
     username: enteredEmail,
     password: enteredPassword,
@@ -71,12 +79,19 @@ function Login(props) {
     await loginUser(data)
       .then((jwtTokenData) => {
         console.log("user login: ");
-        console.log(jwtTokenData);
-        props.navigation.navigate("Landing");
+        console.log(jwtTokenData.token);
+        dispatch(addAuth(jwtTokenData.token));
+        console.log("................", addedItems);
+        // props.data(jwtTokenData);
+
+        if (!jwtTokenData.token) {
+          props.navigation.navigate("Landing");
+          console.log("...Landing.......");
+        }
       })
       .catch((err) => {
         Alert.alert("email or password is incorrect");
-        console.log(data);
+        console.log(err.message);
       });
   }
 

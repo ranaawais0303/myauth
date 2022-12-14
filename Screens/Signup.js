@@ -90,6 +90,8 @@ function Signup(props) {
   }
   //for creating account
   async function signupHandler() {
+    props.navigation.navigate("Login");
+
     await signup({
       name: enteredName,
       email: enteredEmail,
