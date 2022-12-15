@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   View,
@@ -16,16 +17,42 @@ import PrimaryButton from "../components/UI/PrimaryButton";
 import Title from "../components/UI/Title";
 import Colors from "../constant/colors";
 import { loginUser } from "../services/user-servic";
-import { addAuth } from "../redux/AuthSlice";
+// import { addAuth } from "../redux/AuthSlice";
 
 function Login(props) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [token, setToken] = useState("");
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    getData();
+  }, []);
+
+  /////
+  useEffect(() => {
+    if (token) {
+      loginHandler();
+    }
+  }, [token]);
+
   // /Redux functionality
-  const dispatch = useDispatch();
-  const addedItems = useSelector((state) => state.auth);
+  // const dispatch = useDispatch();
+  // const addedItems = useSelector((state) => state.auth);
+
+  ///////local storage
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+      if (value !== null) {
+        setToken(value);
+        console.log(".......Token.. is  apear");
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   /////////////////
   const data = {
@@ -74,25 +101,36 @@ function Login(props) {
     }
   }
 
-  /////
   async function loginHandler() {
-    await loginUser(data)
-      .then((jwtTokenData) => {
-        console.log("user login: ");
-        console.log(jwtTokenData.token);
-        dispatch(addAuth(jwtTokenData.token));
-        console.log("................", addedItems);
-        // props.data(jwtTokenData);
+    if (token) {
+      console.log("token hai");
+      props.navigation.navigate("Landing");
+    } else {
+      await loginUser(data)
+        .then(async (jwtTokenData) => {
+          console.log("user login: ");
+          /////////local storage set
+          try {
+            setToken(jwtTokenData);
+            await AsyncStorage.setItem("token", jwtTokenData.token);
+            const t = await AsyncStorage.getItem("token");
+            console.log("await token", t);
+          } catch (err) {
+            console.log(err);
+          }
 
-        if (!jwtTokenData.token) {
-          props.navigation.navigate("Landing");
-          console.log("...Landing.......");
-        }
-      })
-      .catch((err) => {
-        Alert.alert("email or password is incorrect");
-        console.log(err.message);
-      });
+          ////////////This is for redux toolkit
+          // console.log(jwtTokenData.token);
+          // dispatch(addAuth(jwtTokenData.token));
+          // console.log("................", addedItems);
+          // props.data(jwtTokenData);
+        })
+        .catch((err) => {
+          Alert.alert("email or password is incorrect");
+          console.log(err.message);
+        });
+    }
+    console.log();
   }
 
   return (

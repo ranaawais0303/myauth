@@ -9,8 +9,10 @@ export async function signup(user) {
 }
 
 export async function loginUser(loginDetail) {
-  console.log("sddjdj");
   return await axios
     .post("http://192.168.1.124:8080/api/v1/auth/login", loginDetail)
     .then((response) => response.data);
+}
+export async function allUser() {
+  return await axios.get(BACKEND_URL).then((response) => response.data);
 }

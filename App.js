@@ -10,12 +10,8 @@ import { Provider } from "react-redux";
 import MyStore from "./redux/MyStore";
 
 function App() {
-  const [data, setData] = useState({});
   const Stack = createNativeStackNavigator();
 
-  function dataset(data) {
-    setData(data);
-  }
   return (
     <Provider store={MyStore}>
       <NavigationContainer>

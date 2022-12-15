@@ -1,12 +1,20 @@
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import Background from "../components/Background";
 import PrimaryButton from "../components/UI/PrimaryButton";
 import Title from "../components/UI/Title";
 
 function Home(props) {
-  function loginHandler() {
-    console.log("pressed");
-    props.navigation.navigate("Login");
+  async function loginHandler() {
+    const value = await AsyncStorage.getItem("token");
+    if (value) {
+      props.navigation.navigate("Landing");
+      console.log(".......Token.. is  apearlanding");
+    } else {
+      console.log("login", value);
+      props.navigation.navigate("Login");
+    }
   }
   function signupHandler() {
     props.navigation.navigate("Signup");
