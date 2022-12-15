@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 
-import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from "react-native";
 import { signup } from "../services/user-servic";
 import Background from "../components/Background";
 import Card from "../components/UI/Card";
@@ -90,19 +97,24 @@ function Signup(props) {
   }
   //for creating account
   async function signupHandler() {
-    props.navigation.navigate("Login");
-
     await signup({
       name: enteredName,
       email: enteredEmail,
       password: enteredPassword,
     })
       .then((resp) => {
-        console.log(resp);
-        console.log("success Log");
+        if (resp) {
+          console.log("success Log");
+          props.navigation.navigate("Login");
+        } else {
+          console.log("something went wrong");
+          Alert.alert("Email exist ");
+        }
       })
       .catch((error) => {
         console.log(error);
+        Alert.alert("Email exist ");
+
         console.log("Error Log");
       })
       .finally(() => {
